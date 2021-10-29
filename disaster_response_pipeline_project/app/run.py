@@ -19,6 +19,16 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    '''
+    Takes text strings and performs cleaning, tokenizing, lemmatizing, and stopword removal.
+    
+    INPUT:
+    text - (str) text string to be cleaned and tokenized
+    
+    OUTPUT:
+    tokens - (list) list of text tokens
+    '''
+    
     # normalize
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     
