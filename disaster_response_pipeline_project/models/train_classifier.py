@@ -22,6 +22,17 @@ nltk.download('wordnet')
 
 
 def load_data(database_filepath):
+    '''
+    Loads dataframe from SQLite database and splits into X and Y variables for Machine Learning.
+    
+    INPUT:
+    database_filepath - (str) filepath of the database
+    
+    OUTPUT:
+    X - (pandas dataframe) dataframe containing typed messages
+    Y - (pandas dataframe) dataframe containing category flags
+    category_names - (list) list of category names
+    '''
 
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table('disaster_response', engine)
@@ -39,6 +50,15 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    '''
+    Takes text strings and performs cleaning, tokenizing, lemmatizing, and stopword removal.
+    
+    INPUT:
+    text - (str) text string to be cleaned and tokenized
+    
+    OUTPUT:
+    tokens - (list) list of text tokens
+    '''
 
     # normalize
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
@@ -53,6 +73,12 @@ def tokenize(text):
 
 
 def build_model():
+    '''
+    Creates model pipeline and uses GridSearch to find the best hyper-parameters.
+    
+    OUTPUT:
+    model - (DecisionTreeClassifier) trained multi-output decision tree classification model
+    '''
 
     # Create model pipeline
     pipeline = Pipeline([
@@ -80,6 +106,16 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    '''
+    Evaluates the model on the test data and outputs the precision, recall, and F1-score of the overall
+    model and each individual category.
+    
+    INPUT:
+    model - (DecisionTreeClassifier) trained multi-output decision tree classification model
+    X_test - (df) text messages (features) from the test set
+    Y_test - (df) category flags (targets) from the test set
+    category_names - (list) list of category names
+    '''
 
     # Create predictions
     Y_pred = model.predict(X_test)
@@ -92,6 +128,13 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    '''
+    Saves the trained model as a pickle file.
+    
+    INPUT:
+    model - (DecisionTreeClassifier) trained multi-output decision tree classification model
+    model_filepath - (str) filepath the model is to be saved to
+    '''
 
     # Save model as a pickle file
     with open(model_filepath, 'wb') as f:
@@ -99,6 +142,10 @@ def save_model(model, model_filepath):
 
 
 def main():
+    '''
+    Script to execute training, evaluation, and saving of the model.
+    '''
+    
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
